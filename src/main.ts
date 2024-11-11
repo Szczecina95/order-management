@@ -7,11 +7,14 @@ import { ConfigService } from 'nestjs-config';
 import { swaggerSetup } from './swagger-setup';
 import { AppModule } from './app.module';
 import { ConfigNames } from '@config/config-names.enum';
+import { MealsSeederService } from '@meals/meals-seeder/meals-seeder.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get<ConfigService>(ConfigService);
   const commonConfig = configService.get(ConfigNames.common);
+  const mealsSeederService = app.get(MealsSeederService);
+  await mealsSeederService.seedMeals();
   if (commonConfig.env === 'development') {
     const morgan = await import('morgan');
     app.use(morgan.default('[:date[clf]] :method :url :status'));
@@ -37,6 +40,7 @@ async function bootstrap() {
   if (commonConfig.env === 'development') {
     swaggerSetup(app);
   }
+
   await app.listen(commonConfig.port);
 }
 bootstrap();

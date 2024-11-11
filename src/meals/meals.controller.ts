@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { MealsService } from './meals.service';
 
 @Controller('meals')
@@ -6,7 +6,7 @@ export class MealsController {
   constructor(private readonly mealsService: MealsService) {}
 
   @Get('/')
-  getMeals() {
-    // return available meals
+  getMeals(@Query('category') category: string) {
+    return this.mealsService.getMeals(category);
   }
 }
